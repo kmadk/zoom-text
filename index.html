@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Zoom Text Boxes</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+            background: white;
+        }
+        .text-box {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        // Initialize the map
+        const map = L.map('map', {
+            crs: L.CRS.Simple,
+            minZoom: -5,
+            maxZoom: 5,
+            center: [0, 0],
+            zoom: 0
+        });
+
+        // Define bounds
+        const bounds = [[-1000, -1000], [1000, 1000]];
+        map.setMaxBounds(bounds);
+
+        // Create a white tile layer
+        L.tileLayer('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==', {
+            minZoom: -5,
+            maxZoom: 5
+        }).addTo(map);
+
+        // Sample text boxes
+        const textBoxes = [
+            { lat: 0, lng: 0, content: "Center Text" },
+            { lat: 100, lng: 100, content: "Top Right Text" },
+            { lat: -100, lng: -100, content: "Bottom Left Text" }
+        ];
+
+        // Add text boxes to the map
+        textBoxes.forEach(box => {
+            L.marker([box.lat, box.lng], {
+                icon: L.divIcon({
+                    className: 'text-box',
+                    html: box.content
+                })
+            }).addTo(map);
+        });
+
+        // Function to add a new text box
+        function addTextBox(lat, lng, content) {
+            L.marker([lat, lng], {
+                icon: L.divIcon({
+                    className: 'text-box',
+                    html: content
+                })
+            }).addTo(map);
+        }
+
+        // Example: Add a new text box on click
+        map.on('click', function(e) {
+            const content = prompt("Enter text for the new box:");
+            if (content) {
+                addTextBox(e.latlng.lat, e.latlng.lng, content);
+            }
+        });
+    </script>
+</body>
+</html>
